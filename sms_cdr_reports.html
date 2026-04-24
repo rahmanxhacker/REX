@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}SMS CDR Reports - REX SMS PANEL{% endblock %}
+
+{% block content %}
+
+<!-- PAGE TITLE -->
+<div class="card-box">
+    <h3><i class="fa fa-file-text"></i> SMS CDR Reports</h3>
+</div>
+
+<!-- STATS -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card-box">
+            <div>Total SMS</div>
+            <div class="stat">{{ totals.total_sms or 0 }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box">
+            <div>Agent Payout</div>
+            <div class="stat">{{ "%.4f"|format(totals.total_payout or 0) }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box">
+            <div>Client Cost</div>
+            <div class="stat">{{ "%.4f"|format(totals.total_client or 0) }}</div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card-box">
+            <div>Profit</div>
+            <div class="stat">{{ "%.4f"|format(totals.total_profit or 0) }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- FILTER BOX -->
+<div class="card-box">
+    <h4><i class="fa fa-filter"></i> Filters</h4>
+
+    <form method="GET" action="{{ url_for('main.sms_cdr_reports') }}">
+        <div class="row">
+
+            <div class="col-md-2">
+                <label>From</label>
+                <input type="date" name="fdate1" class="form-control" value="{{ fdate1[:10] if fdate1 else '' }}">
+            </div>
+
+            <div class="col-md-2">
+                <label>To</label>
+                <input type="date" name="fdate2" class="form-control" value="{{ fdate2[:10] if fdate2 else '' }}">
+            </div>
+
+            <div class="col-md-2">
+                <label>Range</label>
+                <select name="frange" class="form-control">
+                    <option value="">All</option>
+                    {% for range in ranges %}
+                    <option value="{{ range.id }}" {% if request.args.get('frange') == range.id|string %}selected{% endif %}>
+                        {{ range.prefix }} - {{ range.country }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Client</label>
+                <select name="fclient" class="form-control">
+                    <option value="">All</option>
+                    {% for client in clients %}
+                    <option value="{{ client.id }}" {% if request.args.get('fclient') == client.id|string %}selected{% endif %}>
+                        {{ client.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Number</label>
+                <input type="text" name="fnum" class="form-control" value="{{ request.args.get('fnum','') }}">
+            </div>
+
+            <div class="col-md-2">
+                <label>CLI</label>
+                <input type="text" name="fcli" class="form-control" value="{{ request.args.get('fcli','') }}">
+            </div>
+
+        </div>
+
+        <br>
+
+        <button class="btn btn-primary">
+            <i class="fa fa-search"></i> Search
+        </button>
+
+        <a href="{{ url_for('main.sms_cdr_reports') }}" class="btn btn-default">
+            Reset
+        </a>
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="card-box">
+    <h4><i class="fa fa-list"></i> CDR Records ({{ totals.total_sms or 0 }})</h4>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Date</th>
+                    <th>CLI</th>
+                    <th>Range</th>
+                    <th>Message</th>
+                    <th>Payout</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if cdr_records.items %}
+                {% for cdr in cdr_records.items %}
+                <tr>
+                    <td>{{ cdr.sms_number.number if cdr.sms_number else cdr.destination or 'N/A' }}</td>
+                    <td>{{ cdr.created_at.strftime('%Y-%m-%d %H:%M') if cdr.created_at else '' }}</td>
+                    <td>{{ cdr.cli or '-' }}</td>
+                    <td>{{ cdr.range_info.prefix if cdr.range_info else '-' }}</td>
+                    <td>{{ cdr.message or '-' }}</td>
+                    <td>{{ "%.4f"|format(cdr.agent_payout or 0) }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center">No Data</td>
+                </tr>
+                {% endif %}
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- PAGINATION -->
+    {% if cdr_records.pages > 1 %}
+    <ul class="pagination">
+        {% if cdr_records.has_prev %}
+        <li><a href="{{ url_for('main.sms_cdr_reports', page=cdr_records.prev_num) }}">Prev</a></li>
+        {% endif %}
+
+        {% for p in range(1, cdr_records.pages + 1) %}
+        <li class="{% if p == cdr_records.page %}active{% endif %}">
+            <a href="{{ url_for('main.sms_cdr_reports', page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+
+        {% if cdr_records.has_next %}
+        <li><a href="{{ url_for('main.sms_cdr_reports', page=cdr_records.next_num) }}">Next</a></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+
+</div>
+
+{% endblock %}

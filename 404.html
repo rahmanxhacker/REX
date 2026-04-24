@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Not Found | REX SMS PANEL</title>
+
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box;}
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top, #0f2027, #0a0f1a);
+            height: 100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:#fff;
+        }
+
+        .box {
+            text-align:center;
+        }
+
+        .code {
+            font-size:120px;
+            font-weight:900;
+            color:#00d4ff;
+            text-shadow:0 0 25px rgba(0,212,255,0.6);
+        }
+
+        .msg {
+            font-size:26px;
+            margin-top:10px;
+        }
+
+        .sub {
+            margin:15px 0;
+            color:#aaa;
+        }
+
+        .btn-home {
+            margin-top:20px;
+            display:inline-block;
+            padding:12px 35px;
+            background:#00d4ff;
+            color:#000;
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .btn-home:hover {
+            background:#00aacc;
+            transform:translateY(-2px);
+            box-shadow:0 10px 25px rgba(0,212,255,0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+    <div class="code">404</div>
+    <div class="msg">Page Not Found</div>
+    <div class="sub">Oops! This page does not exist.</div>
+
+    <a href="{{ url_for('main.dashboard') }}" class="btn-home">
+        🚀 Back to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

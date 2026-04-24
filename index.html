@@ -1,141 +1,270 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-</head>
 {% extends "base.html" %}
+{% block title %}Assets Manager — REX SMS PANEL{% endblock %}
 
-{% block title %}Admin Panel - ABYSS SMS{% endblock %}
+{% block extra_css %}
+<style>
+
+/* HEADER */
+.page-header h3{
+    color: var(--accent);
+    font-weight:700;
+}
+
+/* TABS */
+.tab-btn{
+    border-radius:8px;
+    font-size:13px;
+}
+.tab-btn.active{
+    background: var(--accent);
+    color:#000;
+}
+
+/* CARD */
+.asset-card{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px;
+    transition:0.2s;
+}
+.asset-card:hover{
+    transform: translateY(-4px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* TABLE */
+.table{
+    background: transparent;
+}
+.table th{
+    color: var(--muted);
+    font-size:12px;
+}
+.table td{
+    vertical-align:middle;
+}
+
+/* EMPTY */
+.empty-box{
+    padding:40px;
+    text-align:center;
+    color:var(--muted);
+}
+
+/* BADGE */
+.badge-dark{
+    background:#111;
+    border:1px solid var(--border);
+}
+
+/* ACTION BUTTONS */
+.btn-xs{
+    border-radius:6px;
+}
+
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="breadcrumb">
-            <h4><i class="fa fa-shield"></i> Admin Panel</h4>
+
+<div class="page-header">
+    <h3><i class="fa fa-code"></i> Static Assets Manager</h3>
+</div>
+
+<!-- TABS -->
+<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+
+    <button class="btn btn-primary tab-btn active" onclick="showTab('img')" id="tab-img">
+        <i class="fa fa-image"></i> Images
+        <span class="badge badge-dark">{{ imgs|length }}</span>
+    </button>
+
+    <button class="btn btn-default tab-btn" onclick="showTab('css')" id="tab-css">
+        <i class="fa fa-paint-brush"></i> CSS
+        <span class="badge badge-dark">{{ csss|length }}</span>
+    </button>
+
+    <button class="btn btn-default tab-btn" onclick="showTab('js')" id="tab-js">
+        <i class="fa fa-bolt"></i> JS
+        <span class="badge badge-dark">{{ jss|length }}</span>
+    </button>
+
+    <button class="btn btn-default tab-btn" onclick="showTab('html')" id="tab-html">
+        <i class="fa fa-file-code-o"></i> HTML
+        <span class="badge badge-dark">{{ htmls|length }}</span>
+    </button>
+
+    <a href="{{ url_for('dev.upload') }}" class="btn btn-success" style="margin-left:auto;">
+        <i class="fa fa-plus"></i> Upload
+    </a>
+
+</div>
+
+<!-- ================= IMG ================= -->
+<div class="tab-section" id="sec-img">
+
+    {% if imgs %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:15px;">
+        {% for a in imgs %}
+        <div class="asset-card">
+
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+                {{ a.filename }}
+            </div>
+
+            <div style="display:flex;gap:6px;justify-content:center;">
+                <a href="{{ url_for('dev.edit', asset_id=a.id) }}" class="btn btn-xs btn-info">
+                    <i class="fa fa-edit"></i>
+                </a>
+
+                <form method="POST" action="{{ url_for('dev.delete', asset_id=a.id) }}" onsubmit="return confirm('Delete?')">
+                    <button class="btn btn-xs btn-danger">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.users') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-users" style="font-size: 48px; color: #e94560;"></i>
-                <h4 style="margin-top: 15px;">Manage Users</h4>
-                <p class="text-muted">View and edit user accounts</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.sms_ranges') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-flag" style="font-size: 48px; color: #28a745;"></i>
-                <h4 style="margin-top: 15px;">SMS Ranges</h4>
-                <p class="text-muted">Manage SMS ranges</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.sms_numbers') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-phone" style="font-size: 48px; color: #007bff;"></i>
-                <h4 style="margin-top: 15px;">SMS Numbers</h4>
-                <p class="text-muted">Manage SMS numbers</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.sms_send') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-paper-plane" style="font-size: 48px; color: #6f42c1;"></i>
-                <h4 style="margin-top: 15px;">Send SMS</h4>
-                <p class="text-muted">Send SMS to numbers</p>
-            </div>
-        </a>
-    </div>
-</div>
-
-<div class="row" style="margin-top: 20px;">
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.activity_logs') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-history" style="font-size: 48px; color: #fd7e14;"></i>
-                <h4 style="margin-top: 15px;">Activity Logs</h4>
-                <p class="text-muted">View all activity logs</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-3">
-        <a href="{{ url_for('admin.sms_cdr') }}" class="widget-block" style="display: block; text-decoration: none; color: inherit;">
-            <div class="widget-content text-center" style="padding: 30px;">
-                <i class="fa fa-file-text" style="font-size: 48px; color: #17a2b8;"></i>
-                <h4 style="margin-top: 15px;">SMS CDR</h4>
-                <p class="text-muted">View SMS call records</p>
-            </div>
-        </a>
-    </div>
-</div>
-
-<div class="row" style="margin-top: 20px;">
-    <div class="col-md-6">
-        <div class="widget-block">
-            <div class="widget-head">
-                <h5><i class="fa fa-bar-chart"></i> System Statistics</h5>
-            </div>
-            <div class="widget-content">
-                <table class="table">
-                    <tr>
-                        <th>Total Users:</th>
-                        <td><strong>{{ stats.total_users }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Active Users:</th>
-                        <td><span class="label label-success">{{ stats.active_users }}</span></td>
-                    </tr>
-                    <tr>
-                        <th>Total SMS Ranges:</th>
-                        <td><strong>{{ stats.total_ranges }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Total SMS Numbers:</th>
-                        <td><strong>{{ stats.total_numbers }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>Total CDR Records:</th>
-                        <td><strong>{{ stats.total_cdr }}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>SMS Today:</th>
-                        <td><strong>{{ stats.today_sms }}</strong></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 
-    <div class="col-md-6">
-        <div class="widget-block">
-            <div class="widget-head">
-                <h5><i class="fa fa-bullhorn"></i> News Management</h5>
-                <a href="{{ url_for('admin.create_news') }}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add News</a>
-            </div>
-            <div class="widget-content">
-                <ul class="list-unstyled">
-                    {% if recent_news %}
-                    {% for news in recent_news %}
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>{{ news.headline }}</strong>
-                        <br>
-                        <small class="text-muted">{{ news.created_at.strftime('%Y-%m-%d') if news.created_at else '' }}</small>
-                        <a href="{{ url_for('admin.delete_news', news_id=news.id) }}" class="btn btn-xs btn-danger pull-right" onclick="return confirm('Are you sure?')"><i class="fa fa-trash"></i></a>
-                    </li>
-                    {% endfor %}
-                    {% else %}
-                    <li class="text-muted">No news available.</li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
+    {% else %}
+    <div class="empty-box">
+        No images found <br>
+        <a href="{{ url_for('dev.upload') }}?type=img">Upload Now</a>
     </div>
+    {% endif %}
+
 </div>
+
+<!-- ================= CSS ================= -->
+<div class="tab-section" id="sec-css" style="display:none;">
+
+    {% if csss %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Description</th>
+                <th>URL</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for a in csss %}
+        <tr>
+            <td><code>{{ a.filename }}</code></td>
+            <td>{{ a.description or '—' }}</td>
+            <td><code>/dev/serve/css/{{ a.id }}</code></td>
+            <td>
+                <a href="{{ url_for('dev.edit', asset_id=a.id) }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                <form method="POST" action="{{ url_for('dev.delete', asset_id=a.id) }}" style="display:inline;">
+                    <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty-box">No CSS files</div>
+    {% endif %}
+
+</div>
+
+<!-- ================= JS ================= -->
+<div class="tab-section" id="sec-js" style="display:none;">
+
+    {% if jss %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>File</th>
+                <th>Description</th>
+                <th>URL</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for a in jss %}
+        <tr>
+            <td><code>{{ a.filename }}</code></td>
+            <td>{{ a.description or '—' }}</td>
+            <td><code>/dev/serve/js/{{ a.id }}</code></td>
+            <td>
+                <a href="{{ url_for('dev.edit', asset_id=a.id) }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                <form method="POST" action="{{ url_for('dev.delete', asset_id=a.id) }}" style="display:inline;">
+                    <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty-box">No JS files</div>
+    {% endif %}
+
+</div>
+
+<!-- ================= HTML ================= -->
+<div class="tab-section" id="sec-html" style="display:none;">
+
+    {% if htmls %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Page</th>
+                <th>Title</th>
+                <th>Live</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for a in htmls %}
+        <tr>
+            <td><code>{{ a.filename }}</code></td>
+            <td>{{ a.title or '—' }}</td>
+            <td>
+                <a href="{{ url_for('dev.page_view', slug=a.slug) }}" target="_blank">
+                    <i class="fa fa-external-link"></i> Open
+                </a>
+            </td>
+            <td>
+                <a href="{{ url_for('dev.edit', asset_id=a.id) }}" class="btn btn-xs btn-info"><i class="fa fa-edit"></i></a>
+                <a href="{{ url_for('dev.page_view', slug=a.slug) }}" class="btn btn-xs btn-success"><i class="fa fa-eye"></i></a>
+                <form method="POST" action="{{ url_for('dev.delete', asset_id=a.id) }}" style="display:inline;">
+                    <button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty-box">No HTML pages</div>
+    {% endif %}
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+function showTab(tab) {
+    document.querySelectorAll('.tab-section').forEach(el => el.style.display='none');
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active','btn-primary'));
+
+    document.getElementById('sec-'+tab).style.display='block';
+
+    let btn = document.getElementById('tab-'+tab);
+    btn.classList.add('active','btn-primary');
+}
+</script>
+
 {% endblock %}

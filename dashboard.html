@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 🔥 PANEL TITLE -->
+    <title>{% block title %}REX SMS PANEL{% endblock %}</title>
+
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+<!-- 🔥 TOPBAR -->
+<div class="topbar">
+    <button class="hamburger" onclick="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- 🔥 LOGO NAME UPDATED -->
+    <a class="topbar-brand" href="{{ url_for('main.dashboard') }}">
+        ⚡ REX SMS PANEL
+    </a>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="topbar-user">
+        <strong>{{ current_user.username }}</strong>
+        |
+        <span>{{ current_user.role.display_name if current_user.role else 'User' }}</span>
+
+        <a href="{{ url_for('auth.logout') }}">
+            <i class="fa fa-sign-out"></i> Logout
+        </a>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+
+    <div class="sb-user">
+        <div>{{ current_user.username }}</div>
+        <small>{{ current_user.role.display_name }}</small>
+    </div>
+
+    <ul class="sb-nav">
+
+        <li>
+            <a href="{{ url_for('main.dashboard') }}" class="sb-link">
+                <i class="fa fa-dashboard"></i> Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('main.sms_ranges') }}" class="sb-link">
+                <i class="fa fa-flag"></i> SMS Ranges
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('main.my_sms_numbers') }}" class="sb-link">
+                <i class="fa fa-phone"></i> My Numbers
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('main.sms_cdr_reports') }}" class="sb-link">
+                <i class="fa fa-file-text"></i> CDR Reports
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('main.clients') }}" class="sb-link">
+                <i class="fa fa-users"></i> Clients
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('main.profile') }}" class="sb-link">
+                <i class="fa fa-cog"></i> Settings
+            </a>
+        </li>
+
+        {% if current_user.is_admin() %}
+        <li>
+            <a href="{{ url_for('admin.index') }}" class="sb-link" style="color:#ff4757;">
+                <i class="fa fa-shield"></i> Admin Panel
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="page-wrap">
+
+    {% block content %}{% endblock %}
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+function toggleSidebar(){
+    document.getElementById('sidebar').classList.toggle('open');
+}
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

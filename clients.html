@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Clients - REX SMS PANEL{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* CARD */
+.rex-table-box{
+    background:#111;
+    border-radius:14px;
+    padding:20px;
+    border:1px solid #2a2a2a;
+}
+
+/* TABLE */
+.rex-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.rex-table th{
+    color:#FFD700;
+    font-weight:600;
+    padding:12px;
+    font-size:13px;
+    border-bottom:1px solid #2a2a2a;
+}
+
+.rex-table td{
+    padding:12px;
+    border-bottom:1px solid #1f1f1f;
+    font-size:13px;
+}
+
+/* ROW HOVER */
+.rex-table tr:hover{
+    background:#1a1a1a;
+}
+
+/* STATUS */
+.status-active{
+    color:#2ed573;
+    font-weight:600;
+}
+
+.status-inactive{
+    color:#ff4757;
+    font-weight:600;
+}
+
+/* BUTTONS */
+.btn-rex{
+    border:none;
+    padding:6px 10px;
+    border-radius:6px;
+    font-size:12px;
+}
+
+.btn-view{background:#1e90ff;}
+.btn-edit{background:#ffa502;}
+.btn-lock{background:#ff4757;}
+.btn-unlock{background:#2ed573;}
+
+.btn-rex:hover{
+    opacity:0.8;
+}
+
+/* MODAL */
+.modal-content{
+    background:#111;
+    border-radius:12px;
+    border:1px solid #2a2a2a;
+}
+
+.modal-header{
+    border-bottom:1px solid #2a2a2a;
+}
+
+.modal-title{
+    color:#FFD700;
+}
+
+.form-control{
+    background:#1a1a1a;
+    border:1px solid #333;
+    color:#fff;
+}
+
+</style>
+
+<div class="rex-table-box">
+
+<div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    <h4><i class="fa fa-users"></i> Clients</h4>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-success btn-sm">
+        <i class="fa fa-plus"></i> Add Client
+    </a>
+</div>
+
+<table class="rex-table">
+
+<thead>
+<tr>
+    <th>Username</th>
+    <th>Email</th>
+    <th>Country</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for client in clients.items %}
+<tr>
+    <td>{{ client.username }}</td>
+    <td>{{ client.email }}</td>
+    <td>{{ client.country or 'N/A' }}</td>
+
+    <td>
+        {% if client.is_active %}
+        <span class="status-active">● Active</span>
+        {% else %}
+        <span class="status-inactive">● Inactive</span>
+        {% endif %}
+    </td>
+
+    <td>
+        <button class="btn-rex btn-view" data-toggle="modal" data-target="#editModal{{ client.id }}">
+            <i class="fa fa-eye"></i>
+        </button>
+
+        <a href="{{ url_for('admin.toggle_user_status', user_id=client.id) }}"
+           class="btn-rex {% if client.is_active %}btn-lock{% else %}btn-unlock{% endif %}">
+            <i class="fa fa-{% if client.is_active %}lock{% else %}unlock{% endif %}"></i>
+        </a>
+    </td>
+</tr>
+
+<!-- MODAL -->
+<div class="modal fade" id="editModal{{ client.id }}">
+<div class="modal-dialog">
+<div class="modal-content">
+
+<div class="modal-header">
+    <h4 class="modal-title">Edit Client</h4>
+</div>
+
+<div class="modal-body">
+
+<form method="POST" action="{{ url_for('admin.update_client', user_id=client.id) }}">
+
+<input class="form-control" name="username" value="{{ client.username }}"><br>
+
+<input class="form-control" name="email" value="{{ client.email }}"><br>
+
+<input class="form-control" name="country" value="{{ client.country }}"><br>
+
+<label style="margin-top:10px;">
+<input type="checkbox" name="active" {% if client.is_active %}checked{% endif %}>
+ Active
+</label>
+
+<br><br>
+
+<button class="btn btn-success">Update</button>
+
+</form>
+
+</div>
+
+</div>
+</div>
+</div>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}

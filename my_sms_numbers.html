@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}SMS Numbers - REX SMS PANEL{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* BOX */
+.rex-box{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+}
+
+/* HEADER FLEX */
+.rex-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+/* FILTER */
+.rex-filter select{
+    background:#111;
+    border:1px solid var(--border);
+    color:var(--txt);
+    padding:6px;
+    border-radius:6px;
+}
+
+/* TABLE */
+.rex-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+.rex-table th{
+    color:var(--accent);
+    font-size:13px;
+    padding:12px;
+    border-bottom:1px solid var(--border);
+}
+
+.rex-table td{
+    padding:12px;
+    font-size:13px;
+    border-bottom:1px solid #1f1f1f;
+}
+
+/* HOVER */
+.rex-table tr:hover{
+    background: var(--hover);
+}
+
+/* STATUS */
+.status-active{
+    color:var(--success);
+    font-weight:600;
+}
+.status-inactive{
+    color:var(--danger);
+    font-weight:600;
+}
+
+/* NUMBER STYLE */
+.rex-number{
+    font-weight:700;
+    color:#fff;
+}
+
+/* PAGINATION */
+.pagination .page-link{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--txt);
+}
+.pagination .active .page-link{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#000;
+}
+
+</style>
+
+<!-- TITLE -->
+<div style="margin-bottom:15px;">
+    <h4><i class="fa fa-phone"></i> My SMS Numbers</h4>
+</div>
+
+<div class="rex-box">
+
+<!-- HEADER -->
+<div class="rex-head">
+
+<strong>Allocated Numbers</strong>
+
+<form method="GET" class="rex-filter">
+
+<select name="frange">
+<option value="">All Ranges</option>
+{% for r in ranges %}
+<option value="{{ r.id }}" {% if request.args.get('frange') == r.id|string %}selected{% endif %}>
+{{ r.prefix }} - {{ r.country }}
+</option>
+{% endfor %}
+</select>
+
+<select name="fclient">
+<option value="">All Clients</option>
+{% for c in clients %}
+<option value="{{ c.id }}" {% if request.args.get('fclient') == c.id|string %}selected{% endif %}>
+{{ c.username }}
+</option>
+{% endfor %}
+</select>
+
+<button class="btn btn-sm btn-primary">
+<i class="fa fa-filter"></i>
+</button>
+
+</form>
+
+</div>
+
+<!-- TABLE -->
+<div class="table-responsive">
+<table class="rex-table">
+
+<thead>
+<tr>
+<th>Number</th>
+<th>Range</th>
+<th>Client</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% if numbers.items %}
+
+{% for n in numbers.items %}
+<tr>
+
+<td class="rex-number">{{ n.number }}</td>
+
+<td>
+{% if n.range_info %}
+{{ n.range_info.prefix }} - {{ n.range_info.country }}
+{% else %}
+N/A
+{% endif %}
+</td>
+
+<td>
+{% if n.client_info %}
+{{ n.client_info.username }}
+{% else %}
+<span style="color:var(--muted)">Unassigned</span>
+{% endif %}
+</td>
+
+<td>
+{% if n.is_active %}
+<span class="status-active">● Active</span>
+{% else %}
+<span class="status-inactive">● Inactive</span>
+{% endif %}
+</td>
+
+<td>
+{{ n.created_at.strftime('%Y-%m-%d') if n.created_at else 'N/A' }}
+</td>
+
+</tr>
+{% endfor %}
+
+{% else %}
+
+<tr>
+<td colspan="5" style="text-align:center; color:var(--muted);">
+No numbers found
+</td>
+</tr>
+
+{% endif %}
+
+</tbody>
+</table>
+</div>
+
+<!-- PAGINATION -->
+{% if numbers.pages > 1 %}
+<div style="margin-top:15px;">
+<ul class="pagination">
+
+{% if numbers.has_prev %}
+<li>
+<a class="page-link"
+href="{{ url_for('main.my_sms_numbers', page=numbers.prev_num, frange=request.args.get('frange',''), fclient=request.args.get('fclient','')) }}">
+Prev
+</a>
+</li>
+{% endif %}
+
+{% for p in range(1, numbers.pages + 1) %}
+<li class="{% if p == numbers.page %}active{% endif %}">
+<a class="page-link"
+href="{{ url_for('main.my_sms_numbers', page=p, frange=request.args.get('frange',''), fclient=request.args.get('fclient','')) }}">
+{{ p }}
+</a>
+</li>
+{% endfor %}
+
+{% if numbers.has_next %}
+<li>
+<a class="page-link"
+href="{{ url_for('main.my_sms_numbers', page=numbers.next_num, frange=request.args.get('frange',''), fclient=request.args.get('fclient','')) }}">
+Next
+</a>
+</li>
+{% endif %}
+
+</ul>
+</div>
+{% endif %}
+
+</div>
+
+{% endblock %}

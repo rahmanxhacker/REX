@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - REX SMS PANEL{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* BOX */
+.rex-box{
+    background: var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+}
+
+/* HEADER */
+.rex-title{
+    margin-bottom:15px;
+}
+
+/* NOTIFICATION ITEM */
+.rex-noti{
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    margin-bottom:10px;
+    background:#111;
+    transition:.2s;
+}
+
+.rex-noti:hover{
+    background: var(--hover);
+}
+
+/* TYPES */
+.noti-info{border-left:4px solid var(--accent);}
+.noti-success{border-left:4px solid var(--success);}
+.noti-warning{border-left:4px solid var(--warn);}
+.noti-danger{border-left:4px solid var(--danger);}
+
+/* TEXT */
+.rex-noti-title{
+    font-weight:600;
+    margin-bottom:4px;
+}
+
+.rex-noti-time{
+    font-size:11px;
+    color:var(--muted);
+}
+
+/* EMPTY */
+.rex-empty{
+    text-align:center;
+    padding:40px 10px;
+    color:var(--muted);
+}
+
+</style>
+
+<!-- TITLE -->
+<div class="rex-title">
+    <h4><i class="fa fa-bell"></i> Notifications</h4>
+</div>
+
+<div class="rex-box">
+
+{% if notifications %}
+
+    {% for n in notifications %}
+
+    <div class="rex-noti 
+        {% if n.type == 'success' %}noti-success
+        {% elif n.type == 'warning' %}noti-warning
+        {% elif n.type == 'danger' %}noti-danger
+        {% else %}noti-info{% endif %}">
+
+        <div class="rex-noti-title">
+            {{ n.title or 'Notification' }}
+        </div>
+
+        <div>
+            {{ n.message }}
+        </div>
+
+        <div class="rex-noti-time">
+            {{ n.created_at.strftime('%Y-%m-%d %H:%M') if n.created_at else '' }}
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="rex-empty">
+    <i class="fa fa-bell" style="font-size:30px;"></i>
+    <p>No new notifications</p>
+</div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}
