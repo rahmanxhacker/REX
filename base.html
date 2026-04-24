@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{% block title %}REX SMS PANEL{% endblock %}</title>
+
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/styles.css" rel="stylesheet">
+
+<style>
+:root {
+    --bg:#0a0a0a;
+    --card:#141414;
+    --hover:#1f1f1f;
+    --border:#2b2b2b;
+    --txt:#ffffff;
+    --muted:#888;
+    --accent:#FFD700;
+}
+
+/* GLOBAL */
+body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:'Segoe UI';
+}
+
+/* TOPBAR */
+.topbar{
+    height:60px;
+    background:#111;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    padding:0 20px;
+    position:fixed;
+    width:100%;
+    z-index:1000;
+}
+
+.topbar-brand{
+    font-weight:800;
+    font-size:18px;
+    color:var(--accent);
+    text-decoration:none;
+}
+
+.topbar-user{
+    margin-left:auto;
+    font-size:13px;
+}
+
+.topbar-user a{
+    color:#aaa;
+    margin-left:10px;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:240px;
+    position:fixed;
+    top:60px;
+    bottom:0;
+    background:#111;
+    border-right:1px solid var(--border);
+}
+
+.sb-link{
+    display:block;
+    padding:12px 20px;
+    color:#aaa;
+    text-decoration:none;
+}
+
+.sb-link:hover{
+    background:var(--hover);
+    color:var(--accent);
+}
+
+/* PAGE */
+.page-wrap{
+    margin-left:240px;
+    padding:90px 25px;
+}
+
+/* CARDS */
+.rex-card{
+    background:#111;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+    border:1px solid #2a2a2a;
+    transition:0.3s;
+}
+
+.rex-card:hover{
+    border-color:var(--accent);
+    transform:translateY(-5px);
+}
+
+.rex-card i{
+    color:var(--accent);
+    font-size:26px;
+}
+
+.rex-box{
+    background:#141414;
+    padding:20px;
+    border-radius:10px;
+    border:1px solid #2a2a2a;
+    margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <a href="{{ url_for('main.dashboard') }}" class="topbar-brand">
+        🦁 REX SMS PANEL
+    </a>
+
+    <div class="topbar-user">
+        {{ current_user.username }}
+        <a href="{{ url_for('auth.logout') }}">
+            <i class="fa fa-sign-out"></i>
+        </a>
+    </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<a href="{{ url_for('main.dashboard') }}" class="sb-link">
+    <i class="fa fa-dashboard"></i> Dashboard
+</a>
+
+<a href="{{ url_for('main.sms_ranges') }}" class="sb-link">
+    <i class="fa fa-flag"></i> Ranges
+</a>
+
+<a href="{{ url_for('main.my_sms_numbers') }}" class="sb-link">
+    <i class="fa fa-phone"></i> Numbers
+</a>
+
+<a href="{{ url_for('main.clients') }}" class="sb-link">
+    <i class="fa fa-users"></i> Clients
+</a>
+
+<a href="{{ url_for('main.notifications') }}" class="sb-link">
+    <i class="fa fa-bell"></i> Notifications
+</a>
+
+</div>
+
+<!-- CONTENT -->
+<div class="page-wrap">
+
+{% block content %}{% endblock %}
+
+</div>
+
+</body>
+</html>
